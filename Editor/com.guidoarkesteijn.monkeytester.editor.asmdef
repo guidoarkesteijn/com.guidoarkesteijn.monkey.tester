@@ -1,0 +1,15 @@
+{
+    "name": "com.guidoarkesteijn.monkeytester.editor",
+    "references": [
+        "GUID:e762955324ea36843a257c268b374e49"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
