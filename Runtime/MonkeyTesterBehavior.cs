@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,64 +9,101 @@ namespace com.guidoarkesteijn.monkeytester.runtime
 {
     public class MonkeyTesterBehavior : MonoBehaviour
     {
+        [SerializeField] private bool Enabled;
         [SerializeField] private RectTransform mouseCursorPosition;
+        
 
         private MonkeyTesterSettings monkeyTesterSettings;
+
+        private bool started = false;
+        private float endTime = -1;
 
         protected void Awake()
         {
             monkeyTesterSettings = Resources.Load<MonkeyTesterSettings>(nameof(MonkeyTesterSettings));
+            Enabled = monkeyTesterSettings.StartOnStartup;
 
             DontDestroyOnLoad(this.gameObject);
         }
 
-        private void Start()
+        protected void Update()
         {
-            StartCoroutine(Test());
-        }
-
-        private IEnumerator Test()
-        {
-            float endTime = Time.realtimeSinceStartup + monkeyTesterSettings.TestTimeInSeconds;
-
-            while (endTime > Time.realtimeSinceStartup)
+            if (Enabled)
             {
-                yield return null;
+                if(!started)
+                {
+                    StartMonkeyTest();
+                }
 
-                ExecuteAllEvents();
+                if (endTime > Time.realtimeSinceStartup)
+                {
+                    ExecuteTest();
+                }
+                else
+                {
+                    StopMonkeyTest();
+                }
             }
-
-
-            Debug.Log("STOP");
+            else
+            {
+                if(started)
+                {
+                    StopMonkeyTest();
+                }
+            }
         }
 
-        private void ExecuteAllEvents()
+        protected void OnGUI()
+        {
+            GUILayout.BeginArea(new Rect(10, 10, 250, 100));
+            {
+                string text = !Enabled ? "Start Monkey Test" : "Stop Monkey Test";
+
+                if(GUILayout.Button(text))
+                {
+                    Enabled = !Enabled;
+                }
+            }
+            GUILayout.EndArea();
+        }
+
+        private void StartMonkeyTest()
+        {
+            started = true;
+            endTime = Time.realtimeSinceStartup + monkeyTesterSettings.TestTimeInSeconds;
+        }
+
+        private void StopMonkeyTest()
+        {
+            Enabled = false;
+            started = false;
+            endTime = -1;
+        }
+
+        private void ExecuteTest()
         {
             EventSystem eventSystem = EventSystem.current;
 
-            GraphicRaycaster[] graphicRayCaster = FindObjectsOfType<GraphicRaycaster>();
+            var screenPosition = new Vector2(Random.Range(0, Screen.width), Random.Range(0, Screen.height));
 
-            foreach (var item in graphicRayCaster)
+            PointerEventData data = new PointerEventData(eventSystem)
             {
-                PointerEventData data = new PointerEventData(eventSystem);
-                data.position = new Vector2(Random.Range(0, Screen.width), Random.Range(0, Screen.height));
+                position = screenPosition,
+                pressPosition = screenPosition
+            };
 
-                mouseCursorPosition.anchoredPosition = data.position;
+            mouseCursorPosition.anchoredPosition = data.position;
 
-                List<RaycastResult> results = new List<RaycastResult>();
+            List<RaycastResult> results = new List<RaycastResult>();
 
-                Debug.Log(data.position);
+            Debug.Log(data.position);
 
-                item.Raycast(data, results);
+            eventSystem.RaycastAll(data, results);
 
-                if(results.Count > 0)
-                {
-                    foreach (var result in results)
-                    {
-                        Debug.Log("HIT: " + result.gameObject.name);
-                        ExecuteEvents.Execute(result.gameObject, new PointerEventData(eventSystem), ExecuteEvents.pointerClickHandler);
-                    }
-                }
+            if (results.Count > 0)
+            {
+                var result = results.First();
+                ExecuteEvents.ExecuteHierarchy(result.gameObject, new PointerEventData(eventSystem), ExecuteEvents.pointerClickHandler);
             }
         }
     }

@@ -11,11 +11,7 @@ namespace com.guidoarkesteijn.monkeytester.editor
         [InitializeOnLoadMethod]
         public static void MonkeyTesterSettingsCreate()
         {
-            Debug.Log("MonkeyTesterSettingsCreator");
-
             var monkeyTesterSettings = Resources.Load<MonkeyTesterSettings>(nameof(MonkeyTesterSettings));
-
-            Debug.Log("MonkeyTesterSettingsCreator: " + monkeyTesterSettings);
 
             if (monkeyTesterSettings == null)
             {
@@ -32,7 +28,7 @@ namespace com.guidoarkesteijn.monkeytester.editor
                 AssetDatabase.CreateFolder("Assets", "Resources");
             }
 
-            AssetDatabase.CreateAsset(monkeyTesterSettings, "Assets/Resources/MonkeyTesterSettings.asset");
+            AssetDatabase.CreateAsset(monkeyTesterSettings, $"Assets/Resources/{nameof(MonkeyTesterSettings)}.asset");
         }
     }
 }

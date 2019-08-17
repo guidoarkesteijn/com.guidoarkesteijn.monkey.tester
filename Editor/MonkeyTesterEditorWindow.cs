@@ -33,7 +33,6 @@ namespace com.guidoarkesteijn.monkeytester.editor
         protected void OnGUI()
         {
             monkeyTesterSettings.SetTestTimeInSeconds(EditorGUILayout.IntField("Test TIme In Seconds", monkeyTesterSettings.TestTimeInSeconds));
-            monkeyTesterSettings.SetClicksPerSeconds(EditorGUILayout.IntField("Clicks Per Seconds", monkeyTesterSettings.ClicksPerSeconds));
         }
     }
 }
