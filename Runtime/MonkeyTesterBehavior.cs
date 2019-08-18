@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace com.guidoarkesteijn.monkeytester.runtime
         [SerializeField] private bool Enabled;
         [SerializeField] private RectTransform mouseCursorPosition;
         
-
         private MonkeyTesterSettings monkeyTesterSettings;
 
         private bool started = false;
@@ -84,7 +84,7 @@ namespace com.guidoarkesteijn.monkeytester.runtime
         {
             EventSystem eventSystem = EventSystem.current;
 
-            var screenPosition = new Vector2(Random.Range(0, Screen.width), Random.Range(0, Screen.height));
+            var screenPosition = new Vector2(UnityEngine.Random.Range(0, Screen.width), UnityEngine.Random.Range(0, Screen.height));
 
             PointerEventData data = new PointerEventData(eventSystem)
             {
@@ -102,9 +102,25 @@ namespace com.guidoarkesteijn.monkeytester.runtime
 
             if (results.Count > 0)
             {
-                var result = results.First();
-                ExecuteEvents.ExecuteHierarchy(result.gameObject, new PointerEventData(eventSystem), ExecuteEvents.pointerClickHandler);
+                results = results.OrderBy(x => x.distance).ToList();
+
+                var result = results.FirstOrDefault();
+
+                foreach (var item in GetInputHandles())
+                {
+                    item.Execute(result.gameObject, eventSystem, data);
+                }
             }
+        }
+
+        private List<IInputHandle> GetInputHandles()
+        {
+            return new List<IInputHandle>()
+            {
+                new BaseInputHandle(),
+                new PointerInputHandle(),
+                new MoveInputHandle()
+            };
         }
     }
 }
