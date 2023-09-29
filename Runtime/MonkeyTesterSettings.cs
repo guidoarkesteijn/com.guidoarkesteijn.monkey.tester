@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace com.guidoarkesteijn.monkeytester.runtime
 {
+    [CreateAssetMenu(menuName = "Guido Arkesteijn/Monkey Tester Settings")]
     public class MonkeyTesterSettings : ScriptableObject
     {
         public bool SpawnOnStartup { get { return spawnOnStartup; } }
@@ -12,12 +11,5 @@ namespace com.guidoarkesteijn.monkeytester.runtime
         [SerializeField] protected bool startOnStartup;
         public int TestTimeInSeconds { get { return testTimeInSeconds; } }
         [SerializeField] private int testTimeInSeconds = 300;
-
-#if UNITY_EDITOR
-        public void SetTestTimeInSeconds(int value)
-        {
-            testTimeInSeconds = value;
-        }
-#endif
     }
 }

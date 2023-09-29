@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace com.guidoarkesteijn.monkeytester.runtime
 {
@@ -14,11 +12,21 @@ namespace com.guidoarkesteijn.monkeytester.runtime
         public static void Execute()
         {
             monkeyTesterSettings = Resources.Load<MonkeyTesterSettings>(nameof(MonkeyTesterSettings));
-            if(monkeyTesterSettings.SpawnOnStartup)
+            if (monkeyTesterSettings == null)
             {
+                return;
+            }
+
+            if (monkeyTesterSettings.SpawnOnStartup)
+            {
+                if (Object.FindAnyObjectByType<MonkeyTesterBehavior>() != null)
+                {
+                    return;
+                }
+
                 GameObject prefab = Resources.Load<GameObject>(MONKEY_TESTER_RESOURCE_PATH);
 
-                if(prefab != null)
+                if (prefab != null)
                 {
                     GameObject instance = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
                 }
