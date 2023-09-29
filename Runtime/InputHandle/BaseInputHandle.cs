@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class BaseInputHandle : BaseInputHandle<BaseEventData>
@@ -12,7 +10,6 @@ public class BaseInputHandle : BaseInputHandle<BaseEventData>
         ExecuteEvent(go, baseEventData, ExecuteEvents.selectHandler);
         ExecuteEvent(go, baseEventData, ExecuteEvents.updateSelectedHandler);
         ExecuteEvent(go, baseEventData, ExecuteEvents.deselectHandler);
-        ExecuteEvent(go, baseEventData, ExecuteEvents.submitHandler);
         ExecuteEvent(go, baseEventData, ExecuteEvents.cancelHandler);
     }
 
